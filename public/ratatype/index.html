@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ratatype — тренажёр слепой печати</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="logo"><span>Ratatype</span></div>
+  <nav class="tabs">
+    <button class="tab active" data-view="practice">Тренировка</button>
+    <button class="tab" data-view="lessons">Уроки</button>
+    <button class="tab" data-view="stats">Статистика</button>
+    <button class="tab" data-view="profile">Профиль</button>
+  </nav>
+  <div class="user-chip" id="userChip" hidden>
+    <span class="user-avatar" id="userAvatar">?</span>
+    <span class="user-name" id="userName">guest</span>
+    <button class="logout" id="logoutBtn">выйти</button>
+  </div>
+</header>
+
+<main>
+  <!-- ================= ТРЕНИРОВКА ================= -->
+  <section id="practice" class="view active">
+    <div class="stats-row">
+      <div class="stat"><span class="stat-value" id="wpm">0</span><span class="stat-label">WPM</span></div>
+      <div class="stat"><span class="stat-value" id="accuracy">100%</span><span class="stat-label">Точность</span></div>
+      <div class="stat"><span class="stat-value" id="time">0:00</span><span class="stat-label">Время</span></div>
+      <div class="stat"><span class="stat-value" id="errors">0</span><span class="stat-label">Ошибки</span></div>
+    </div>
+
+    <div class="text-box" id="textBox" tabindex="0">
+      <div id="textDisplay" class="text-display"></div>
+      <div class="caret" id="caret"></div>
+    </div>
+
+    <div class="controls">
+      <button id="restartBtn" class="btn primary">Заново (Tab)</button>
+      <select id="modeSelect" class="select">
+        <option value="texts" selected>Тексты (~50 слов)</option>
+        <option value="words">Случайные слова</option>
+        <option value="quotes">Короткие цитаты</option>
+        <option value="code">Код</option>
+        <option value="numbers">Цифры и символы</option>
+      </select>
+      <select id="langSelect" class="select">
+        <option value="ru">Русский</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+
+    <div class="keyboard" id="keyboard"></div>
+  </section>
+
+  <!-- ================= УРОКИ ================= -->
+  <section id="lessons" class="view">
+    <h2>Уроки слепой печати</h2>
+    <div class="lesson-grid" id="lessonGrid"></div>
+    <div class="lesson-panel" id="lessonPanel" hidden>
+      <h3 id="lessonTitle"></h3>
+      <p id="lessonDesc" class="lesson-desc"></p>
+      <div class="text-box" id="lessonTextBox" tabindex="0">
+        <div id="lessonDisplay" class="text-display"></div>
+      </div>
+      <div class="controls">
+        <button id="lessonRestart" class="btn primary">Заново</button>
+        <button id="lessonBack" class="btn">К списку уроков</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= СТАТИСТИКА ================= -->
+  <section id="stats" class="view">
+    <h2>Статистика за всё время</h2>
+
+    <div class="stats-cards">
+      <div class="card"><span id="bestWpm">0</span><small>Лучший WPM</small></div>
+      <div class="card"><span id="avgWpm">0</span><small>Средний WPM</small></div>
+      <div class="card"><span id="bestAcc">0%</span><small>Лучшая точность</small></div>
+      <div class="card"><span id="totalRuns">0</span><small>Забегов</small></div>
+    </div>
+
+    <div class="stats-cards">
+      <div class="card"><span id="totalChars">0</span><small>Символов набрано</small></div>
+      <div class="card"><span id="totalTime">0м</span><small>Всего времени</small></div>
+      <div class="card"><span id="lastWpm">0</span><small>Последний WPM</small></div>
+      <div class="card"><span id="streakDays">0</span><small>Дней подряд</small></div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span>Прогресс до 100 WPM</span>
+        <strong id="progressPct">0%</strong>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div class="progress-note" id="progressNote">Начни тренировку, чтобы увидеть прогресс</div>
+    </div>
+
+    <h3>Динамика WPM</h3>
+    <div class="chart" id="wpmChart"></div>
+
+    <h3>История</h3>
+    <table class="history">
+      <thead><tr><th>#</th><th>WPM</th><th>Точность</th><th>Символов</th><th>Дата</th></tr></thead>
+      <tbody id="historyBody"></tbody>
+    </table>
+    <button id="clearStats" class="btn danger">Очистить историю</button>
+  </section>
+
+  <!-- ================= ПРОФИЛЬ ================= -->
+  <section id="profile" class="view">
+    <h2>Профиль</h2>
+
+    <div class="profile-head">
+      <div class="profile-avatar" id="profileAvatar">?</div>
+      <div class="profile-meta">
+        <div class="profile-name" id="profileName">guest</div>
+        <div class="profile-sub" id="profileSub">не авторизован</div>
+      </div>
+      <div class="profile-rank" id="profileRank">новичок</div>
+    </div>
+
+    <div class="stats-cards">
+      <div class="card"><span id="pBest">0</span><small>Личный рекорд</small></div>
+      <div class="card"><span id="pAvg">0</span><small>Средний WPM</small></div>
+      <div class="card"><span id="pRuns">0</span><small>Забегов</small></div>
+      <div class="card"><span id="pAcc">0%</span><small>Средняя точность</small></div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span>Уровень мастерства</span>
+        <strong id="levelPct">0%</strong>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="levelFill" style="width:0%"></div>
+      </div>
+      <div class="progress-note" id="levelNote">0 / 100 WPM до следующего ранга</div>
+    </div>
+
+    <h3>Достижения</h3>
+    <div class="badges" id="badges"></div>
+
+    <h3>Личные рекорды по режимам</h3>
+    <table class="history">
+      <thead><tr><th>Режим</th><th>Лучший WPM</th><th>Точность</th></tr></thead>
+      <tbody id="modeRecords"></tbody>
+    </table>
+  </section>
+</main>
+
+<script src="texts.js"></script>
+<script src="texts2.js"></script>
+<script src="texts3.js"></script>
+<script src="texts4.js"></script>
+<script src="texts5.js"></script>
+<script src="texts6.js"></script>
+<script src="texts7.js"></script>
+<script src="normalize.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
