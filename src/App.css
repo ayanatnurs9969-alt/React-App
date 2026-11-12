@@ -1,0 +1,331 @@
+/* ============================================================
+   OLIVA — регистрация
+   палитра: серый бетон + олива
+   ============================================================ */
+
+:root{
+  /* серые */
+  --g-950:#0d0e0c;
+  --g-900:#141613;
+  --g-850:#1a1d19;
+  --g-800:#22261f;
+  --g-700:#2e332b;
+  --g-600:#3d4239;
+  --g-500:#565c4f;
+  --g-400:#7a8071;
+  --g-300:#a3a897;
+  --g-200:#c7cbbd;
+  --g-100:#e4e6dc;
+  --g-050:#f2f3ec;
+
+  /* олива */
+  --ol-900:#2c3312;
+  --ol-800:#3b4419;
+  --ol-700:#4d5a20;
+  --ol-600:#657529;
+  --ol-500:#879a35;
+  --ol-400:#a8bb4e;
+  --ol-300:#c6d47a;
+  --ol-200:#dde5a8;
+
+  --r-s:6px;
+  --r-m:14px;
+  --r-l:26px;
+  --r-xl:44px;
+
+  --ease:cubic-bezier(.16,1,.3,1);
+  --font-d:"Unbounded",system-ui,sans-serif;
+  --font-s:"Instrument Serif",Georgia,serif;
+  --font-m:"JetBrains Mono",ui-monospace,monospace;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  background:var(--g-900);
+  color:var(--g-100);
+  font-family:var(--font-d);
+  font-weight:300;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- шум и сканлайны ---------- */
+.grain{
+  position:fixed;inset:-50%;
+  z-index:9998;pointer-events:none;
+  opacity:.32;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  animation:grainShift 620ms steps(2) infinite;
+  mix-blend-mode:overlay;
+}
+@keyframes grainShift{
+  0%{transform:translate(0,0)}
+  50%{transform:translate(-2%,1.5%)}
+  100%{transform:translate(1.5%,-1%)}
+}
+
+.scanlines{
+  position:fixed;inset:0;z-index:9997;pointer-events:none;
+  background:repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,.16) 0 1px,
+    transparent 1px 3px
+  );
+  opacity:.28;
+  mix-blend-mode:multiply;
+}
+
+/* ---------- каркас ---------- */
+.App{
+  position:relative;
+  min-height:100svh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:clamp(24px,6vh,80px) clamp(16px,5vw,72px);
+  overflow:hidden;
+  background:
+    radial-gradient(1200px 700px at 78% 18%,rgba(101,117,41,.20),transparent 62%),
+    radial-gradient(900px 600px at 8% 88%,rgba(86,92,79,.22),transparent 65%),
+    linear-gradient(160deg,var(--g-950),var(--g-850) 55%,var(--g-900));
+}
+
+/* сетка на фоне */
+.App::before{
+  content:"";
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(to right,rgba(199,203,189,.055) 1px,transparent 1px),
+    linear-gradient(to bottom,rgba(199,203,189,.055) 1px,transparent 1px);
+  background-size:clamp(48px,7vw,96px) clamp(48px,7vw,96px);
+  mask-image:radial-gradient(circle at 50% 45%,#000 20%,transparent 82%);
+  -webkit-mask-image:radial-gradient(circle at 50% 45%,#000 20%,transparent 82%);
+  animation:gridDrift 26s linear infinite;
+  pointer-events:none;
+}
+@keyframes gridDrift{
+  to{background-position:clamp(48px,7vw,96px) clamp(48px,7vw,96px)}
+}
+
+/* оливковый орб на фоне */
+.App::after{
+  content:"";
+  position:absolute;
+  right:clamp(-120px,-2vw,2vw);
+  top:50%;
+  width:clamp(280px,38vw,560px);
+  aspect-ratio:1;
+  transform:translateY(-50%);
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 34% 30%,rgba(221,229,168,.92),rgba(101,117,41,.85) 42%,rgba(44,51,18,.96) 74%),
+    var(--ol-800);
+  box-shadow:
+    0 0 90px rgba(135,154,53,.34),
+    inset -18px -22px 60px rgba(13,14,12,.75),
+    inset 10px 12px 40px rgba(221,229,168,.22);
+  opacity:.28;
+  filter:blur(1px);
+  animation:breathe 7s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes breathe{
+  50%{transform:translateY(-50%) scale(1.045);filter:brightness(1.12)}
+}
+
+/* ---------- заголовок ---------- */
+.header{
+  position:relative;z-index:3;
+  width:min(520px,100%);
+  margin-bottom:clamp(20px,3vh,34px);
+  display:flex;align-items:baseline;gap:12px;
+  border-bottom:1px solid rgba(199,203,189,.12);
+  padding-bottom:16px;
+}
+.header h2{
+  font-size:clamp(30px,5.6vw,54px);
+  font-weight:800;
+  letter-spacing:-.04em;
+  text-transform:lowercase;
+  line-height:.9;
+  color:var(--g-100);
+}
+.header::after{
+  content:"/ 01";
+  margin-left:auto;
+  font-family:var(--font-m);
+  font-size:11px;
+  letter-spacing:.24em;
+  color:var(--ol-500);
+}
+
+/* ---------- карточка формы ---------- */
+.body{
+  position:relative;z-index:3;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  width:min(520px,100%);
+  padding:clamp(24px,4vw,46px);
+  border-radius:var(--r-xl);
+  background:linear-gradient(155deg,rgba(34,38,31,.9),rgba(20,22,19,.92));
+  border:1px solid rgba(199,203,189,.12);
+  backdrop-filter:blur(8px);
+  box-shadow:0 30px 80px rgba(0,0,0,.55);
+  animation:riseIn .9s var(--ease) both;
+}
+@keyframes riseIn{
+  from{opacity:0;transform:translateY(28px)}
+  to{opacity:1;transform:none}
+}
+
+.body label{
+  font-family:var(--font-m);
+  font-size:10px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--ol-400);
+}
+
+.body input{
+  width:100%;
+  padding:15px 18px;
+  border-radius:var(--r-m);
+  border:1px solid rgba(199,203,189,.14);
+  background:rgba(13,14,12,.55);
+  color:var(--g-100);
+  font-family:var(--font-d);
+  font-size:14px;
+  font-weight:300;
+  outline:none;
+  transition:border-color .4s var(--ease),box-shadow .4s var(--ease),background .4s var(--ease);
+}
+.body input::placeholder{
+  color:var(--g-500);
+  font-family:var(--font-m);
+  font-size:12px;
+  letter-spacing:.1em;
+}
+.body input:hover{
+  border-color:rgba(199,203,189,.26);
+}
+.body input:focus{
+  background:rgba(13,14,12,.8);
+  border-color:var(--ol-500);
+  box-shadow:0 0 0 3px rgba(135,154,53,.16),0 0 28px rgba(135,154,53,.22);
+}
+
+/* ---------- кнопка ---------- */
+.body button{
+  --bg:transparent;
+  position:relative;
+  display:inline-flex;align-items:center;justify-content:center;
+  margin-top:10px;
+  padding:15px 30px;
+  border-radius:999px;
+  font-family:var(--font-d);
+  font-size:12.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  font-weight:500;
+  color:var(--g-950);
+  background:var(--ol-500);
+  border:1px solid var(--ol-500);
+  overflow:hidden;
+  isolation:isolate;
+  transition:color .4s var(--ease),border-color .4s var(--ease),transform .4s var(--ease),opacity .3s;
+}
+.body button::before{
+  content:"";
+  position:absolute;inset:0;z-index:-1;
+  background:var(--g-100);
+  transform:translateY(101%);
+  transition:transform .5s var(--ease);
+}
+.body button:hover::before{transform:translateY(0)}
+.body button:hover{transform:translateY(-2px)}
+.body button:active{transform:translateY(0)}
+.body button:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 3px rgba(135,154,53,.35);
+}
+.body button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+  transform:none;
+}
+
+/* ---------- сообщение об ошибке ---------- */
+.form-error{
+  font-family:var(--font-m);
+  font-size:11px;
+  letter-spacing:.06em;
+  line-height:1.5;
+  color:#e08a6a;
+  border-left:2px solid #c4674a;
+  padding-left:10px;
+  margin-top:-2px;
+}
+
+/* ---------- футер с переключателем ---------- */
+.footer{
+  position:relative;z-index:3;
+  width:min(520px,100%);
+  margin-top:18px;
+  padding-top:16px;
+  border-top:1px solid rgba(199,203,189,.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  font-family:var(--font-m);
+  font-size:10.5px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--g-500);
+}
+
+.footer .link-btn{
+  position:relative;
+  background:none;
+  border:none;
+  padding:0 0 2px;
+  font-family:var(--font-m);
+  font-size:10.5px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--ol-300);
+  transition:color .35s var(--ease);
+}
+.footer .link-btn::after{
+  content:"";
+  position:absolute;left:0;bottom:0;
+  width:100%;height:1px;
+  background:var(--ol-400);
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .45s var(--ease);
+}
+.footer .link-btn:hover{color:var(--ol-200)}
+.footer .link-btn:hover::after{transform:scaleX(1)}
+.footer .link-btn:focus-visible{
+  outline:none;
+  color:var(--ol-200);
+}
+.footer .link-btn:focus-visible::after{transform:scaleX(1)}
+
+@media (max-width:680px){
+  .App::after{opacity:.16;right:-38%}
+  .header h2{font-size:clamp(26px,9vw,40px)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+  .grain{display:none}
+}
